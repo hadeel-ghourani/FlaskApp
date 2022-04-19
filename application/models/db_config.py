@@ -1,5 +1,7 @@
 from os import environ
+import sys
 
+sys.path.append('.')
 from sqlalchemy.engine import create_engine
 
 POSTGRES_HOST = environ.get('POSTGRES_HOST')

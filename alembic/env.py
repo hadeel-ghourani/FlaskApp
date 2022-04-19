@@ -1,11 +1,11 @@
 import os
 import sys
 from logging.config import fileConfig
+from os import environ
 
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from application.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -17,10 +17,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 alembic_config = config.get_section(config.config_ini_section)
-config.set_section_option(alembic_config, "POSTGRES_USER", os.environ.get("POSTGRES_USER"))
-config.set_section_option(alembic_config, "POSTGRES_PASSWORD", os.environ.get("POSTGRES_PASSWORD"))
-config.set_section_option(alembic_config, "POSTGRES_HOST", os.environ.get("POSTGRES_HOST"))
-config.set_section_option(alembic_config, "POSTGRES_DB", os.environ.get("POSTGRES_DB"))
+section = config.config_ini_section
 
 # add your model's MetaData object here
 # for 'autogenerate' support
@@ -29,7 +26,10 @@ config.set_section_option(alembic_config, "POSTGRES_DB", os.environ.get("POSTGRE
 
 sys.path.append('.')
 
+from application.models.db_config import db_url
+alembic_config["sqlalchemy.url"] = db_url
 
+from application.models.base import Base
 target_metadata = Base.metadata
 
 
