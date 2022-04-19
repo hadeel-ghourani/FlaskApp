@@ -10,7 +10,7 @@ from sqlalchemy.sql import func
 
 from application.config import db_url
 
-engine = create_engine(db_url, pool_recycle=3600)
+engine = create_engine(db_url)
 session = scoped_session(sessionmaker(bind=engine, autocommit=False,
                                       autoflush=False))
 
@@ -44,3 +44,5 @@ class BaseModel(Base):
     def delete(self):
         session.delete(self)
         session.commit()
+
+#Base.metadata.create_all(bind=engine)

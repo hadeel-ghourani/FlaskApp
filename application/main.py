@@ -1,6 +1,5 @@
 import sys
 
-
 from flask import Flask
 from flask_jwt import JWT
 from flask_restplus import Api
