@@ -104,11 +104,8 @@ class ItemsList(Resource):
     # @jwt_required()
     # @item_ns.doc(security='Bearer Auth')
     @item_ns.doc('Greate Item')
-    @item_ns.expect(item_field)
     def post(self):
-
         data = item_ns.payload
-        item = ItemModel.find(id=data['id'])
         try:
 
             loaded_data = ItemSchema().load(data)

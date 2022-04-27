@@ -59,7 +59,7 @@ def test_put_items(put_itemsList_mock, client, item_dict_mock):
     assert response.status_code == 200
 
 
-@patch("application.resources.items.ItemsList.put")
+@patch("application.resources.items.ItemsList.post")
 def test_post_items(post_itemsList_mock, client, item_dict_mock):
 
     post_itemsList_mock.return_value = item_dict_mock
@@ -67,4 +67,4 @@ def test_post_items(post_itemsList_mock, client, item_dict_mock):
     response = client.post(url)
 
     post_itemsList_mock.assert_called()
-    assert response.status_code == 201
+    assert response.status_code == 200
