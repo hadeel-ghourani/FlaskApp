@@ -1,7 +1,7 @@
 from flask_restplus import Namespace, Resource, fields
 
 from application.config import auth
-from application.models.user import UserModel
+from application.models.users import UserModel
 
 user_ns = Namespace('register', description='registration',
                     authorizations=auth)
@@ -31,7 +31,7 @@ class UserRegister(Resource):
 
         user.insert()
 
-        return user.json(), 201
+        return user.json(), 200
 
 
 user_ns.add_resource(UserRegister, '/')

@@ -36,6 +36,7 @@ class BaseModel(Base):
     def insert(self):
         session.add(self)
         session.commit()
+        #return self.name
 
     def update(self, **data):
         self.query.update(data)
@@ -45,4 +46,5 @@ class BaseModel(Base):
         session.delete(self)
         session.commit()
 
-#Base.metadata.create_all(bind=engine)
+    def get_id(self):
+        return self.id

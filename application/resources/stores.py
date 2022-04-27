@@ -1,14 +1,12 @@
 from flask_restplus import Namespace, Resource, fields
 
 from application.config import auth
-from application.models.store import StoreModel
+from application.models.stores import StoreModel
 
-from .item import item_field
+from .items import item_field
 
-store_ns = Namespace('store', description='registration', authorizations=auth)
-stores_ns = Namespace('stores', description='registration',
-                      authorizations=auth)
-store = stores_ns.model('Store', {
+store_ns = Namespace('stores', description='registration', authorizations=auth)
+store = store_ns.model('Store', {
     'name': fields.String(required=True, description='The store name.'),
     'items': fields.List(fields.Nested(item_field)),
 })
@@ -37,7 +35,7 @@ class Store(Resource):
 class StoreList(Resource):
     def get(self):
         return {'stores': list(map(lambda x: x.json(),
-                                   StoreModel.query.all()))}
+                                   StoreModel.query.all()))}, 200
 
     def post(self):
 

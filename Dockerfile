@@ -12,5 +12,5 @@ ADD . .
 
 EXPOSE 80
 
-ENTRYPOINT [ "./bin/gunicorn.sh" ]
+ENTRYPOINT [ "./bin/test.sh" ]
 

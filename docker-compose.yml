@@ -5,9 +5,6 @@ services:
     build: .
     container_name: web_service
     image: webapp
-    ports:
-      - "80"
-
     depends_on:
       - database
     environment:
@@ -17,7 +14,27 @@ services:
       POSTGRES_HOST: database
       POSTGRES_PORT: "5432"
       VIRTUAL_HOST: web_service.docker
-    
+  
+  webapp_base:
+    extends: db_base
+    build: .
+    container_name: web_service1
+    image: webapp
+    volumes:
+      - ${PWD}:/main
+    command: ["echo", "build successful"]
+
+  db_base:
+    container_name: db
+    image: postgres:14.2
+    volumes:
+      - ${PWD}:/main
+    command: ["echo", "build db successful"]
+
+  webapp_test:
+    extends: webapp_base
+    container_name: webapp_test
+    command: sh -c "pytest --cov=FLASKAPP tests/"
 
   database:
     container_name: database_service
@@ -27,19 +44,11 @@ services:
       POSTGRES_PASSWORD: hadeel123
       POSTGRES_DB: test_db
       POSTGRES_HOST_AUTH_METHOD: trust
+      VIRTUAL_HOST: database.docker
     ports:
       - "5432"
 
-  pgadmin:
-    container_name: pg_service
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: root@root.com 
-      PGADMIN_DEFAULT_PASSWORD: root
-      PGADMIN_LISTEN_PORT: "8080"
-    ports:
-      - "5040:8080"
- 
+
  
  
  

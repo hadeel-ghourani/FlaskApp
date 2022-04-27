@@ -4,8 +4,8 @@ from sqlalchemy import Column, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from .base import Base, BaseModel, engine
-from .store import StoreModel
+from .base import BaseModel
+from .stores import StoreModel
 
 sys.path.append('.')
 
@@ -23,14 +23,12 @@ class ItemModel(BaseModel):
     price = Column(Float)
     store_id = Column(UUID(as_uuid=True), ForeignKey('stores.id'))
     serial_number = Column(String)
-    store = relationship(StoreModel, back_populates='items')
+    stores = relationship(StoreModel, back_populates='items')
 
     def json(self):
-        return {"Item ID ": str(self.id), "Item Name  ": str(self.name),
+        return {"Item ID ": str(self.id), "Item Name  ": self.name,
                 "Item price": self.price,
                 "Serial Number": self.serial_number,
-                "Store ID  ": self.store_id,
+                "Store ID  ": str(self.store_id),
                 "Created at  ": str(self.created_at),
                 "Updated at  ": str(self.updated_at)}
-
-#Base.metadata.create_all(bind=engine)

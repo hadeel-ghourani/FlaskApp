@@ -2,7 +2,7 @@ import sys
 
 from marshmallow import Schema, ValidationError, fields, validate, validates
 
-from application.models.item import ItemModel
+from application.models.items import ItemModel
 
 from .base import BaseSchema
 
@@ -27,8 +27,8 @@ class ItemSchema(BaseSchema):
     @validates('price')
     def validate_price(self, data):
         if data <= 0:
-            raise ValidationError
-        ('The price is not valid, must be great than ZERO!')
+            raise ValidationError(
+                'The price is not valid, must be great than ZERO!')
 
     @validates('serial_number')
     def validate_serial(self, data):

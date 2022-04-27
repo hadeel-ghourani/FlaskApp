@@ -5,13 +5,13 @@ from flask_restplus import Namespace, Resource, fields, reqparse
 
 from application.config import auth
 from application.models.base import session
-from application.models.item import ItemModel
+from application.models.items import ItemModel
 from application.validation.item import ItemSchema, NestedSchema
 
 sys.path.append('.')
 
 
-item_ns = Namespace('item', description='singel resource',
+item_ns = Namespace('items', description='singel resource',
                     authorizations=auth)
 
 item_field = item_ns.model('Item', {
@@ -45,13 +45,13 @@ class Item(Resource):
         data = item_ns.payload
         item = ItemModel.find(id=id)
         if item:
-            ItemSchema().load(data)
-            item.update(**data)
-            return item.json()
-            # except:
-            #    return {"message": "An error occurred creating the item."},
-            # 500
-        return {'msg': 'Item is not found!'}
+            try:
+                ItemSchema().load(data)
+                item.update(**data)
+                return item.json(), 200
+            except Exception:
+                raise Exception("An error occurred creating the item.")
+        return {'msg': 'Item is not found!'}, 404
 
     # @jwt_required()
     @item_ns.doc(security='Bearer Auth')
@@ -88,8 +88,10 @@ class ItemsList(Resource):
             except Exception as e:
                 fail.append(dict(unvalidated_item, error=str(e)))
                 continue
+
             query = ItemModel.find(serial_number=_item['serial_number'],
                                    name=_item['name'])
+
             if query:
                 query.update(**_item)
                 success.append(dict(Item_ID=query.id, status=200))
@@ -97,7 +99,7 @@ class ItemsList(Resource):
                 new_item = ItemModel(**_item)
                 new_item.insert()
                 success.append(dict(Item_ID=new_item.name, status=201))
-        return {"Updated Items": success, "Failed to update": fail}
+        return {"Updated Items": success, "Failed to update": fail}, 200
 
     # @jwt_required()
     # @item_ns.doc(security='Bearer Auth')
@@ -106,7 +108,7 @@ class ItemsList(Resource):
     def post(self):
 
         data = item_ns.payload
-        item = ItemModel.find(id=data.get(id, None))
+        item = ItemModel.find(id=data['id'])
         try:
 
             loaded_data = ItemSchema().load(data)
@@ -115,7 +117,7 @@ class ItemsList(Resource):
                 return {'message': "Item already exists."}, 400
             item = ItemModel(**data)
             item.insert()
-            return item.json()
+            return item.json(), 201
         except Exception:
             return {"msg": "err.args"}
 

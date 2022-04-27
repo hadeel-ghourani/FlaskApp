@@ -1,7 +1,4 @@
-import os
-import sys
 from logging.config import fileConfig
-from os import environ
 
 from sqlalchemy import engine_from_config, pool
 
@@ -16,22 +13,14 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-alembic_config = config.get_section(config.config_ini_section)
-section = config.config_ini_section
-
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-
+import sys
 sys.path.append('.')
-
-from application.models.db_config import db_url
-alembic_config["sqlalchemy.url"] = db_url
 
 from application.models.base import Base
 target_metadata = Base.metadata
-
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -71,7 +60,7 @@ def run_migrations_online():
 
     """
     connectable = engine_from_config(
-        alembic_config,
+        config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
